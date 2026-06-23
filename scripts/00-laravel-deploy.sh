@@ -10,8 +10,8 @@ php artisan config:cache
 echo "Caching routes..."
 php artisan route:cache
 
-echo "Running migrations..."
-php artisan migrate --force
+echo "Running migrations..." > /var/www/html/storage/logs/deploy.log
+php artisan migrate --force >> /var/www/html/storage/logs/deploy.log 2>&1
 
-echo "Seeding database..."
-php artisan db:seed --force
+echo "Seeding database..." >> /var/www/html/storage/logs/deploy.log
+php artisan db:seed --force >> /var/www/html/storage/logs/deploy.log 2>&1
