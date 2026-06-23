@@ -2,6 +2,9 @@ FROM richarvey/nginx-php-fpm:3.1.6
 
 COPY . .
 
+# Install dependencies during build time
+RUN composer install --no-dev --optimize-autoloader --no-interaction
+
 # Image config
 ENV SKIP_COMPOSER=1
 ENV WEBROOT=/var/www/html/public
