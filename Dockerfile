@@ -3,7 +3,7 @@ FROM richarvey/nginx-php-fpm:3.1.6
 COPY . .
 
 # Install dependencies during build time
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
 
 # Fix permissions for Laravel storage and cache directories
 RUN chown -R nginx:nginx /var/www/html/storage /var/www/html/bootstrap/cache \
