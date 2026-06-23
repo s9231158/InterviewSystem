@@ -1,7 +1,4 @@
 #!/usr/bin/env bash
-echo "Running composer..."
-composer install --no-dev --working-dir=/var/www/html
-
 # Ensure web server has write permissions to storage and cache
 echo "Setting folder permissions..."
 chown -R nginx:nginx /var/www/html/storage /var/www/html/bootstrap/cache
