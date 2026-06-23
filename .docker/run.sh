@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-# Restore files from backup to bypass VOLUME shadowing
-echo "Restoring application files from backup..."
-cp -R /var/www/html_backup/. /var/www/html/
+echo "Running composer..."
+composer install --no-dev --working-dir=/var/www/html
 
 # Ensure web server has write permissions to storage and cache
 echo "Setting folder permissions..."
