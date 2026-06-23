@@ -5,6 +5,10 @@ COPY . .
 # Install dependencies during build time
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
+# Fix permissions for Laravel storage and cache directories
+RUN chown -R nginx:nginx /var/www/html/storage /var/www/html/bootstrap/cache \
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
 # Image config
 ENV SKIP_COMPOSER=1
 ENV WEBROOT=/var/www/html/public
