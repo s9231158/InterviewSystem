@@ -1,4 +1,6 @@
-FROM tangramor/nginx-php8-fpm:php8.4.16_withoutNodejs
+FROM webdevops/php-nginx:8.4
+
+WORKDIR /app
 
 COPY . .
 
@@ -9,15 +11,16 @@ RUN rm -f bootstrap/cache/packages.php bootstrap/cache/services.php
 RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
 
 # Fix permissions for Laravel storage and cache directories
-RUN chown -R nginx:nginx /var/www/html/storage /var/www/html/bootstrap/cache \
-    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+RUN mkdir -p storage/{logs,app/public,framework/{cache/data,sessions,testing,views}} \
+    && chown -R application:application storage bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
 
-# Image config
-ENV SKIP_COMPOSER 1
-ENV WEBROOT /var/www/html/public
-ENV PHP_ERRORS_STDERR 1
-ENV RUN_SCRIPTS 1
-ENV REAL_IP_HEADER 1
+# Make the start scripts executable
+RUN chmod +x scripts/start.sh scripts/00-laravel-deploy.sh
+
+# Webdevops Image config
+ENV WEB_DOCUMENT_ROOT /app/public
+ENV WEB_DOCUMENT_INDEX index.php
 
 # Laravel config
 ENV APP_ENV production
@@ -28,4 +31,4 @@ ENV LOG_CHANNEL stderr
 # Allow composer to run as root
 ENV COMPOSER_ALLOW_SUPERUSER 1
 
-CMD ["/start.sh"]
+CMD ["/app/scripts/start.sh"]
