@@ -1,20 +1,23 @@
 FROM richarvey/nginx-php-fpm:3.1.6
 
-# Set working directory to a non-volume directory
-WORKDIR /var/www/app
+# Set working directory back to standard path
+WORKDIR /var/www/html
 
 COPY . .
 
 # Install dependencies during build time
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# Fix permissions for Laravel storage and cache directories
-RUN chown -R nginx:nginx /var/www/app/storage /var/www/app/bootstrap/cache \
-    && chmod -R 775 /var/www/app/storage /var/www/app/bootstrap/cache
+# Create a backup copy of the fully built application to bypass VOLUME shadowing
+RUN cp -R /var/www/html /var/www/html_backup
+
+# Fix permissions in the backup directory
+RUN chown -R nginx:nginx /var/www/html_backup/storage /var/www/html_backup/bootstrap/cache \
+    && chmod -R 775 /var/www/html_backup/storage /var/www/html_backup/bootstrap/cache
 
 # Image config
 ENV SKIP_COMPOSER=1
-ENV WEBROOT=/var/www/app/public
+ENV WEBROOT=/var/www/html/public
 ENV PHP_ERRORS_STDERR=1
 ENV RUN_SCRIPTS=1
 ENV REAL_IP_HEADER=1
