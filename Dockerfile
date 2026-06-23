@@ -2,6 +2,9 @@ FROM tangramor/nginx-php8-fpm:php8.4.16_withoutNodejs
 
 COPY . .
 
+# Remove local bootstrap caches to allow auto-discovery in production environment
+RUN rm -f bootstrap/cache/packages.php bootstrap/cache/services.php
+
 # Install dependencies during build time
 RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
 
