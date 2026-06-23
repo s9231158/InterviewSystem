@@ -21,3 +21,9 @@ Route::get('/test', function () {
         'user' => $user,
     ]);
 });
+
+Route::middleware(\App\Http\Middleware\VerifyWorkerSignature::class)->group(function () {
+    Route::get('/projects/{name}', [\App\Http\Controllers\ProjectController::class, 'show']);
+    Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'index']);
+    Route::post('/appointments', [\App\Http\Controllers\AppointmentController::class, 'store']);
+});
