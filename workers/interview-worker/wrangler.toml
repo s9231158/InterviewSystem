@@ -1,0 +1,7 @@
+name = "interview-worker"
+main = "index.js"
+compatibility_date = "2024-03-01"
+
+[vars]
+# Non-sensitive environment variables
+LARAVEL_API_URL = "https://interviewsystem-pbb8.onrender.com"
