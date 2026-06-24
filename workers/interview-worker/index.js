@@ -117,8 +117,8 @@ export default {
       const maxLoops = 3; // Safety check to prevent infinite function calling loops
 
       while (loopCount < maxLoops) {
-        const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${env.GEMINI_KEY}`;
-        
+        const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5:generateContent?key=${env.GEMINI_KEY}`;
+
         const response = await fetch(geminiUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
