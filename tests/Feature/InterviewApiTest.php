@@ -215,8 +215,7 @@ class InterviewApiTest extends TestCase
         $response = $this->withHeaders([
             'X-Worker-Signature' => $this->secret,
             'X-Gemini-Key' => 'test-gemini-key'
-        ])->postJson('/api/gemini-proxy', [
-            'model' => 'gemini-3.1-flash-lite',
+        ])->postJson('/api/gemini-proxy?model=gemini-3.1-flash-lite', [
             'contents' => [['role' => 'user', 'parts' => [['text' => 'Hello']]]]
         ]);
 

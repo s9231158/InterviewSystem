@@ -27,8 +27,7 @@ Route::middleware(\App\Http\Middleware\VerifyWorkerSignature::class)->group(func
     Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'index']);
     Route::post('/appointments', [\App\Http\Controllers\AppointmentController::class, 'store']);
     Route::post('/gemini-proxy', function (Request $request) {
-        $model = $request->input('model', 'gemini-3.1-flash-lite');
-        $payload = $request->except(['model']);
+        $model = $request->query('model') ?: $request->input('model', 'gemini-3.1-flash-lite');
         $key = $request->header('X-Gemini-Key') ?: config('app.gemini_key');
 
         if (empty($key)) {
@@ -38,9 +37,10 @@ Route::middleware(\App\Http\Middleware\VerifyWorkerSignature::class)->group(func
         $url = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key={$key}";
 
         try {
-            $response = \Illuminate\Support\Facades\Http::withHeaders([
-                'Content-Type' => 'application/json',
-            ])->post($url, $payload);
+            $rawBody = $request->getContent();
+
+            // Forward request with raw body to preserve empty JSON objects {} from becoming empty arrays []
+            $response = \Illuminate\Support\Facades\Http::withBody($rawBody, 'application/json')->post($url);
 
             return response($response->body(), $response->status())
                 ->header('Content-Type', 'application/json');

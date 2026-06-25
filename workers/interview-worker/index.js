@@ -117,7 +117,7 @@ export default {
       const maxLoops = 3; // Safety check to prevent infinite function calling loops
 
       while (loopCount < maxLoops) {
-        const proxyUrl = `${env.LARAVEL_API_URL}/api/gemini-proxy`;
+        const proxyUrl = `${env.LARAVEL_API_URL}/api/gemini-proxy?model=gemini-3.1-flash-lite`;
 
         const response = await fetch(proxyUrl, {
           method: 'POST',
@@ -127,7 +127,6 @@ export default {
             'X-Gemini-Key': env.GEMINI_KEY,
           },
           body: JSON.stringify({
-            model: 'gemini-3.1-flash-lite',
             contents,
             systemInstruction: SYSTEM_INSTRUCTION,
             tools: TOOLS,
