@@ -17,7 +17,7 @@ class VerifyWorkerSignature
     public function handle(Request $request, Closure $next): Response
     {
         $signature = $request->header('X-Worker-Signature');
-        $secret = env('WORKER_SECRET');
+        $secret = config('app.worker_secret');
 
         // Fail Close: If the secret is not configured on the server, reject access immediately.
         if (empty($secret)) {

@@ -117,12 +117,17 @@ export default {
       const maxLoops = 3; // Safety check to prevent infinite function calling loops
 
       while (loopCount < maxLoops) {
-        const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${env.GEMINI_KEY}`;
+        const proxyUrl = `${env.LARAVEL_API_URL}/api/gemini-proxy`;
 
-        const response = await fetch(geminiUrl, {
+        const response = await fetch(proxyUrl, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Worker-Signature': env.WORKER_SECRET,
+            'X-Gemini-Key': env.GEMINI_KEY,
+          },
           body: JSON.stringify({
+            model: 'gemini-3.1-flash-lite',
             contents,
             systemInstruction: SYSTEM_INSTRUCTION,
             tools: TOOLS,

@@ -123,4 +123,7 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'worker_secret' => env('WORKER_SECRET'),
+    'gemini_key' => env('GEMINI_KEY'),
+
 ];

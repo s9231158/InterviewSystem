@@ -55,6 +55,7 @@ class InterviewApiTest extends TestCase
     public function test_signature_middleware_fail_close_when_secret_missing(): void
     {
         // Unset secret
+        Config::set('app.worker_secret', null);
         putenv("WORKER_SECRET=");
 
         $response = $this->withHeaders([
@@ -174,5 +175,52 @@ class InterviewApiTest extends TestCase
         Mail::assertSent(AppointmentNotification::class, function ($mail) {
             return $mail->hasTo('s9231158@gmail.com');
         });
+    }
+
+    /**
+     * Test Gemini proxy route validation and integration.
+     */
+    public function test_gemini_proxy_behavior(): void
+    {
+        // 1. Without signature, should be blocked by middleware
+        $response = $this->postJson('/api/gemini-proxy', [
+            'model' => 'gemini-3.1-flash-lite',
+            'contents' => [['role' => 'user', 'parts' => [['text' => 'Hello']]]]
+        ]);
+        $response->assertStatus(401);
+
+        // 2. With signature but without key, should return 400
+        Config::set('app.gemini_key', null);
+        $response = $this->withHeaders([
+            'X-Worker-Signature' => $this->secret
+        ])->postJson('/api/gemini-proxy', [
+            'model' => 'gemini-3.1-flash-lite',
+            'contents' => [['role' => 'user', 'parts' => [['text' => 'Hello']]]]
+        ]);
+        $response->assertStatus(400)
+                 ->assertJsonFragment(['error' => 'Gemini API key is required.']);
+
+        // 3. With signature and key, HTTP client calls are faked and proxies response
+        \Illuminate\Support\Facades\Http::fake([
+            'generativelanguage.googleapis.com/*' => \Illuminate\Support\Facades\Http::response([
+                'candidates' => [[
+                    'content' => [
+                        'parts' => [['text' => 'Faked response']],
+                        'role' => 'model'
+                    ]
+                ]]
+            ], 200)
+        ]);
+
+        $response = $this->withHeaders([
+            'X-Worker-Signature' => $this->secret,
+            'X-Gemini-Key' => 'test-gemini-key'
+        ])->postJson('/api/gemini-proxy', [
+            'model' => 'gemini-3.1-flash-lite',
+            'contents' => [['role' => 'user', 'parts' => [['text' => 'Hello']]]]
+        ]);
+
+        $response->assertStatus(200)
+                 ->assertJsonPath('candidates.0.content.parts.0.text', 'Faked response');
     }
 }
