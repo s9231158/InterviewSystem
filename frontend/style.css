@@ -57,7 +57,8 @@ body {
   overflow: hidden;
   background: radial-gradient(circle at 80% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
               radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 40%),
-              var(--bg-primary);
+              url('backgroud.png') no-repeat center center;
+  background-size: cover;
 }
 
 /* --- Layout Container --- */
@@ -103,6 +104,15 @@ body {
   font-weight: 700;
   color: #fff;
   font-size: 1.1rem;
+  overflow: hidden;
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  z-index: 1;
 }
 
 .avatar-glow {
@@ -126,6 +136,7 @@ body {
   letter-spacing: 0.5px;
   background: linear-gradient(to right, #ffffff, #c7d2fe);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
