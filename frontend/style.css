@@ -187,9 +187,39 @@ body {
 /* --- Main Layout Grid --- */
 .app-main {
   display: grid;
-  grid-template-columns: 1.6fr 1fr;
+  grid-template-columns: 0.75fr 1.8fr 1.25fr;
   gap: 20px;
   flex: 1;
+}
+
+/* --- Decorative Cat Column --- */
+.cat-section-deco {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.cat-card-deco {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.cat-img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.cat-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  text-align: center;
 }
 
 /* --- Chat Section (Left Column) --- */
@@ -624,6 +654,10 @@ body {
 @media (max-width: 900px) {
   .app-main {
     grid-template-columns: 1fr;
+  }
+
+  .cat-section-deco {
+    display: none;
   }
 
   .chat-card {
