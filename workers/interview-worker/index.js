@@ -22,13 +22,13 @@ const TOOLS = [{
   functionDeclarations: [
     {
       name: "get_project_detail",
-      description: "當問及搶票系統、專案踩坑經驗、技術架構、高併發瓶頸或解決方案時使用。",
+      description: "當問及搶票系統、薪資自動化、面試代理系統（interview-system）、地理封鎖繞過、專案踩坑經驗、技術架構、高併發瓶頸或解決方案時使用。",
       parameters: {
         type: "OBJECT",
         properties: {
           projectName: {
             type: "STRING",
-            description: "專案的唯一名稱標識，例如 laravel-ticket 或 payroll-automation"
+            description: "專案的唯一名稱標識，例如 laravel-ticket、payroll-automation 或 interview-system"
           }
         },
         required: ["projectName"]
