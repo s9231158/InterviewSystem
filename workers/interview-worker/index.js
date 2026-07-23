@@ -3,12 +3,27 @@
  * Integrates Gemini 1.5 Flash with Function Calling over Laravel backend API.
  */
 
-const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, X-Worker-Signature',
-  'Access-Control-Max-Age': '86400',
-};
+const ALLOWED_ORIGINS = [
+  'https://cocom777.com',
+  'https://www.cocom777.com',
+  'https://s9231158.github.io',
+  'http://localhost',
+  'http://127.0.0.1',
+];
+
+function getCorsHeaders(requestOrigin) {
+  const origin = requestOrigin || '';
+  const isAllowed = ALLOWED_ORIGINS.some(allowed => 
+    origin === allowed || origin.startsWith(allowed + ':')
+  );
+  
+  return {
+    'Access-Control-Allow-Origin': isAllowed ? origin : 'https://cocom777.com',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, X-Worker-Signature',
+    'Access-Control-Max-Age': '86400',
+  };
+}
 
 // System instruction specifying the agent persona and constraints
 const SYSTEM_INSTRUCTION = {
@@ -73,9 +88,24 @@ const TOOLS = [{
 
 export default {
   async fetch(request, env, ctx) {
+    const origin = request.headers.get('Origin');
+    const CORS_HEADERS = getCorsHeaders(origin);
+
     // 1. Handle CORS preflight options
     if (request.method === 'OPTIONS') {
       return new Response(null, { headers: CORS_HEADERS });
+    }
+
+    // 2. Validate origin whitelist
+    const isAllowed = origin && ALLOWED_ORIGINS.some(allowed => 
+      origin === allowed || origin.startsWith(allowed + ':')
+    );
+
+    if (!isAllowed) {
+      return new Response(JSON.stringify({ error: 'Access denied: Unauthorized origin.' }), {
+        status: 403,
+        headers: { 'Content-Type': 'application/json', ...CORS_HEADERS }
+      });
     }
 
     if (request.method !== 'POST') {
